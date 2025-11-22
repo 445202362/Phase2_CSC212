@@ -23,9 +23,11 @@ public class EcommerceSystem {
 	public AVL<Product> getProducts() {
 		return products;
 	}
+
 	public AVL<Product> getProductsByPrice() {
-	    return productsByPrice; // NEW: Getter for price-sorted tree
+		return productsByPrice; // NEW: Getter for price-sorted tree
 	}
+
 	public AVL<Customer> getCustomers() {
 		return customers;
 	}
@@ -210,51 +212,84 @@ public class EcommerceSystem {
 		return common;
 	}
 
-	// Top three products by rating
+	// Top three products by number of 5-star ratings
 	public LinkedList<Product> getTop3Products() {
-		LinkedList<Product> allProducts = new LinkedList<>();
-		inOrderTraversal(products.getRoot(), allProducts);
-		LinkedList<Product> result = new LinkedList<>();
+		LinkedList<Product> allProducts = products.getAllElementsInOrder();
 
-		Product first = null, second = null, third = null;
-		double r1 = -1, r2 = -1, r3 = -1;
+		if (allProducts.empty())
+			return new LinkedList<>();
 
-		if (!allProducts.empty()) {
-			allProducts.findFirst();
-			do {
-				Product product = allProducts.retrieve();
-				double rating = product.getAverageRating();
+		// First, collect all products with their 5-star counts in a simple array
+		int productCount = allProducts.size();
+		Product[] productArray = new Product[productCount];
+		int[] fiveStarCounts = new int[productCount];
 
-				if (rating >= r1) {
-					third = second;
-					r3 = r2;
-					second = first;
-					r2 = r1;
-					first = product;
-					r1 = rating;
-				} else if (rating >= r2) {
-					third = second;
-					r3 = r2;
-					second = product;
-					r2 = rating;
-				} else if (rating >= r3) {
-					third = product;
-					r3 = rating;
-				}
+		// Fill the arrays
+		allProducts.findFirst();
+		for (int i = 0; i < productCount; i++) {
+			productArray[i] = allProducts.retrieve();
 
-				if (allProducts.last())
-					break;
+			// Count 5-star ratings
+			LinkedList<Review> reviews = productArray[i].getReviews();
+			if (!reviews.empty()) {
+				reviews.findFirst();
+				do {
+					if (reviews.retrieve().getRating() == 5) {
+						fiveStarCounts[i]++;
+					}
+					if (reviews.last())
+						break;
+					reviews.findNext();
+				} while (true);
+			}
+
+			if (!allProducts.last())
 				allProducts.findNext();
-			} while (true);
 		}
 
-		// Insert in correct order
-		if (third != null)
-			result.insert(third);
-		if (second != null)
-			result.insert(second);
-		if (first != null)
-			result.insert(first);
+		// Simple selection of top 3 based on 5-star counts
+		Product[] topProducts = new Product[3];
+
+		for (int i = 0; i < productCount; i++) {
+			if (fiveStarCounts[i] > 0) {
+				for (int pos = 0; pos < 3; pos++) {
+					if (topProducts[pos] == null) {
+						topProducts[pos] = productArray[i];
+						break;
+					} else {
+						// Find 5-star count for current top product
+						int currentTopCount = 0;
+						LinkedList<Review> currentReviews = topProducts[pos].getReviews();
+						if (!currentReviews.empty()) {
+							currentReviews.findFirst();
+							do {
+								if (currentReviews.retrieve().getRating() == 5) {
+									currentTopCount++;
+								}
+								if (currentReviews.last())
+									break;
+								currentReviews.findNext();
+							} while (true);
+						}
+
+						if (fiveStarCounts[i] > currentTopCount) {
+							for (int j = 2; j > pos; j--) {
+								topProducts[j] = topProducts[j - 1];
+							}
+							topProducts[pos] = productArray[i];
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Build result list
+		LinkedList<Product> result = new LinkedList<>();
+		for (Product p : topProducts) {
+			if (p != null)
+				result.insert(p);
+		}
 
 		return result;
 	}
@@ -283,36 +318,36 @@ public class EcommerceSystem {
 	// Add product - O(log n) as REQUIRED
 	public void addProduct(Product product) {
 		products.insert(product.getProductId(), product);
-		productsByPrice.insert((int)(product.getPrice() * 100), product);
+		productsByPrice.insert((int) (product.getPrice() * 100), product);
 	}
 
 	// Remove product
 	public boolean removeProduct(int productId) {
-	    Product product = products.get(productId);
-	    if (product != null) {
-	        // Remove from both trees
-	        products.removeKey(productId);
-	        productsByPrice.removeKey((int)(product.getPrice() * 100));
-	        return true;
-	    }
-	    return false;
+		Product product = products.get(productId);
+		if (product != null) {
+			// Remove from both trees
+			products.removeKey(productId);
+			productsByPrice.removeKey((int) (product.getPrice() * 100));
+			return true;
+		}
+		return false;
 	}
 
 	// Update a product - O(log n) as REQUIRED
 	public void updateProduct(int productId, String name, double price, int stock) {
-	    Product product = products.get(productId);
-	    if (product != null) {
-	        // Remove from price-sorted tree with old price
-	        productsByPrice.removeKey((int)(product.getPrice() * 100));
-	        
-	        // Update product details
-	        product.setName(name);
-	        product.setPrice(price);
-	        product.setStock(stock);
-	        
-	        // Re-insert with new price
-	        productsByPrice.insert((int)(price * 100), product);
-	    }
+		Product product = products.get(productId);
+		if (product != null) {
+			// Remove from price-sorted tree with old price
+			productsByPrice.removeKey((int) (product.getPrice() * 100));
+
+			// Update product details
+			product.setName(name);
+			product.setPrice(price);
+			product.setStock(stock);
+
+			// Re-insert with new price
+			productsByPrice.insert((int) (price * 100), product);
+		}
 	}
 
 	// Search a product id - O(log n) as REQUIRED
@@ -489,29 +524,32 @@ public class EcommerceSystem {
 	}
 
 	public LinkedList<Product> getProductsInPriceRange(double minPrice, double maxPrice) {
-	    LinkedList<Product> result = new LinkedList<>();
-	    rangeQueryByPrice(productsByPrice.getRoot(), minPrice, maxPrice, result); // CHANGED: uses productsByPrice
-	    return result;
+		LinkedList<Product> result = new LinkedList<>();
+		rangeQueryByPrice(productsByPrice.getRoot(), minPrice, maxPrice, result); // CHANGED: uses productsByPrice
+		return result;
 	}
-	private void rangeQueryByPrice(AVLNode<Product> node, double minPrice, double maxPrice, LinkedList<Product> result) {
-	    if (node == null) return;
 
-	    double currentPrice = node.data.getPrice();
-	    
-	    // If current price > min, check left subtree (lower prices)
-	    if (currentPrice > minPrice) {
-	        rangeQueryByPrice(node.left, minPrice, maxPrice, result);
-	    }
-	    
-	    // If current node is in range, add it
-	    if (currentPrice >= minPrice && currentPrice <= maxPrice) {
-	        result.insert(node.data);
-	    }
-	    
-	    // If current price < max, check right subtree (higher prices)  
-	    if (currentPrice < maxPrice) {
-	        rangeQueryByPrice(node.right, minPrice, maxPrice, result);
-	    }
+	private void rangeQueryByPrice(AVLNode<Product> node, double minPrice, double maxPrice,
+			LinkedList<Product> result) {
+		if (node == null)
+			return;
+
+		double currentPrice = node.data.getPrice();
+
+		// If current price > min, check left subtree (lower prices)
+		if (currentPrice > minPrice) {
+			rangeQueryByPrice(node.left, minPrice, maxPrice, result);
+		}
+
+		// If current node is in range, add it
+		if (currentPrice >= minPrice && currentPrice <= maxPrice) {
+			result.insert(node.data);
+		}
+
+		// If current price < max, check right subtree (higher prices)
+		if (currentPrice < maxPrice) {
+			rangeQueryByPrice(node.right, minPrice, maxPrice, result);
+		}
 	}
 
 	// 3. Show the Top 3 Most Reviewed Products - USING traversal
@@ -692,7 +730,7 @@ public class EcommerceSystem {
 
 					Product product = new Product(productId, name, price, stock);
 					products.insert(productId, product);
-					productsByPrice.insert((int)(price * 100), product);
+					productsByPrice.insert((int) (price * 100), product);
 					count++;
 				}
 			}
