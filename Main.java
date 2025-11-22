@@ -1,4 +1,5 @@
 package PhaseTwo;
+
 import java.util.Scanner;
 
 public class Main {
@@ -20,7 +21,6 @@ public class Main {
 			System.out.println("2. Customer menu");
 			System.out.println("3. Order menu");
 			System.out.println("4. Exit");
-	
 
 			choice = scanner.nextInt();
 			scanner.nextLine();
@@ -28,377 +28,406 @@ public class Main {
 			case 1:
 				int choice2;
 				do {
-				    System.out.println("\n- PRODUCT MENU -");
-				    System.out.println("1. Add New Product to the stock");
-				    System.out.println("2. Remove a product");
-				    System.out.println("3. Update Product Stock");
-				    System.out.println("4. Search product by ID or Name");
-				    System.out.println("5. Display Top 3 Highest Rated Products (by average rating)");
-				    System.out.println("6. Display Top 3 Most Reviewed Products (by number of reviews)");
-				    System.out.println("7. Display the Common products between 2 customers");
-				    System.out.println("8. View Out of Stock Products");
-				    System.out.println("9. Products in Price Range (Phase II: AVL Range Query)");
-				    System.out.println("10. Back to Main Menu");
-				    System.out.print("Enter choice (1-10): ");
+					System.out.println("\n- PRODUCT MENU -");
+					System.out.println("1. Add New Product to the stock");
+					System.out.println("2. Remove a product");
+					System.out.println("3. Update Product Stock");
+					System.out.println("4. Search product by ID or Name");
+					System.out.println("5. Show Top 3 products");
+					System.out.println("6. Display the Common products between 2 customers");
+					System.out.println("7. View Out of Stock Products");
+					System.out.println("8. Products in Price Range (Phase II: AVL Range Query)");
+					System.out.println("9. Back to Main Menu");
+					System.out.print("Enter choice (1-9): ");
 
-				    choice2 = scanner.nextInt();
-				    scanner.nextLine();
+					choice2 = scanner.nextInt();
+					scanner.nextLine();
 
-				    switch (choice2) {
-				    case 1:
-				        // Add New Product
-				        System.out.println("\n*** ADD NEW PRODUCT ***");
-				        
-				        System.out.print("Enter product name: ");
-				        String productName = scanner.nextLine();
+					switch (choice2) {
+					case 1:
+						// Add New Product
+						System.out.println("\n*** ADD NEW PRODUCT ***");
 
-				        System.out.print("Enter product price: ");
-				        double productPrice = scanner.nextDouble();
-				        scanner.nextLine();
+						System.out.print("Enter product name: ");
+						String productName = scanner.nextLine();
 
-				        System.out.print("Enter initial stock: ");
-				        int initialStock = scanner.nextInt();
-				        scanner.nextLine();
-				        
-				        // Generate new ID using AVL tree
-				        LinkedList<Product> allProducts = amazon.getProducts().getAllElementsInOrder();
-				        int newProductId;
-				        if (allProducts.empty()) {
-				            newProductId = 1;
-				        } else {
-				            allProducts.findFirst();
-				            while (!allProducts.last()) allProducts.findNext();
-				            newProductId = allProducts.retrieve().getProductId() + 1;
-				        }
-				        
-				        Product newProduct = new Product(newProductId, productName, productPrice, initialStock);
-				        amazon.addProduct(newProduct);
-				        System.out.println(" Product added successfully!");
-				        System.out.println(" Product ID is : "+newProduct.getProductId() );
-				        break;
-				        
-				    case 2:
-				        System.out.println("\n*** REMOVE PRODUCT ***");
-				        System.out.print("Enter product ID to remove: ");
-				        int removeProductId = scanner.nextInt();
-				        scanner.nextLine();
+						System.out.print("Enter product price: ");
+						double productPrice = scanner.nextDouble();
+						scanner.nextLine();
 
-				        if (amazon.removeProduct(removeProductId)) {
-				            System.out.println(" Product removed successfully!");
-				        } else {
-				            System.out.println(" Product not found with ID: " + removeProductId);
-				        }
-				        break;
-				        
-				    case 3:
-				        System.out.println("\n*** UPDATE PRODUCT STOCK ***");
-				        System.out.print("Enter product ID: ");
-				        int updateProductId = scanner.nextInt();
-				        scanner.nextLine();
+						System.out.print("Enter initial stock: ");
+						int initialStock = scanner.nextInt();
+						scanner.nextLine();
 
-				        Product productToUpdate = amazon.searchProductById(updateProductId);
-				        if (productToUpdate != null) {
-				            System.out.print("Enter new stock quantity: ");
-				            int newStock = scanner.nextInt();
-				            scanner.nextLine();
-				            productToUpdate.setStock(newStock);
-				            System.out.println(" Stock updated successfully!");
-				        } else {
-				            System.out.println(" Product not found!");
-				        }
-				        break;
-				        
-				    case 4:
-				        // Search Product by ID or Name
-				        System.out.println("\n*** SEARCH PRODUCT ***");
-				        System.out.println("1. Search by ID (Phase II: Logarithmic O(log n) Search)");
-				        System.out.println("2. Search by Name");
-				        System.out.print("Choose search method (1-2): ");
-				        int searchMethod = scanner.nextInt();
-				        scanner.nextLine();
+						// Generate new ID using AVL tree
+						LinkedList<Product> allProducts = amazon.getProducts().getAllElementsInOrder();
+						int newProductId;
+						if (allProducts.empty()) {
+							newProductId = 1;
+						} else {
+							allProducts.findFirst();
+							while (!allProducts.last())
+								allProducts.findNext();
+							newProductId = allProducts.retrieve().getProductId() + 1;
+						}
 
-				        if (searchMethod == 1) {
-				            // Search by ID
-				            System.out.print("Enter product ID: ");
-				            
-				            if (!scanner.hasNextInt()) {
-				                System.out.println("Error: Please enter a valid numeric ID!");
-				                scanner.nextLine();
-				                break;
-				            }
-				            
-				            int searchId = scanner.nextInt();
-				            scanner.nextLine();
-				            
-				            if (searchId <= 0) {
-				                System.out.println("Error: Product ID must be a positive number!");
-				                break;
-				            }
-				            
-				            Product foundProduct = amazon.searchProductById(searchId);
-				            if (foundProduct != null) {
-				                System.out.println("\nProduct Found:");
-				                System.out.println("ID: " + foundProduct.getProductId());
-				                System.out.println("Name: " + foundProduct.getName());
-				                System.out.println("Price: $" + foundProduct.getPrice());
-				                System.out.println("Stock: " + foundProduct.getStock());
-				                
-				                // Simple rating display
-				                double avgRating = foundProduct.getAverageRating();
-				                if (avgRating > 0) {
-				                    System.out.println("Rating: " + avgRating + "/5.0");
-				                }
-				                
-				                // Simple stock status
-				                if (foundProduct.getStock() > 0) {
-				                    System.out.println("Status: In Stock");
-				                } else {
-				                    System.out.println("Status: Out of Stock");
-				                }
-				                
-				            } else {
-				                System.out.println("Product not found with ID: " + searchId);
-				            }
-				            
-				        } else if (searchMethod == 2) {
-				            // Search by Name
-				            System.out.print("Enter product name: ");
-				            String searchName = scanner.nextLine().trim();
-				            
-				            if (searchName.isEmpty()) {
-				                System.out.println("Error: Product name cannot be empty!");
-				                break;
-				            }
-				            
-				            Product p = amazon.searchProductByName(searchName);
-				            if (p != null) {
-				                System.out.println("\nProduct Found:");
-				                System.out.println("ID: " + p.getProductId());
-				                System.out.println("Name: " + p.getName());
-				                System.out.println("Price: $" + p.getPrice());
-				                System.out.println("Stock: " + p.getStock());
-				                
-				                double avgRating = p.getAverageRating();
-				                if (avgRating > 0) {
-				                    System.out.println("Rating: " + avgRating + "/5.0");
-				                }
-				                
-				                if (p.getStock() > 0) {
-				                    System.out.println("Status: In Stock");
-				                } else {
-				                    System.out.println("Status: Out of Stock");
-				                }
-				                
-				            } else {
-				                System.out.println("Product not found with name: '" + searchName + "'");
-				            }
-				            
-				        } else {
-				            System.out.println("Invalid choice! Please enter 1 or 2.");
-				        }
-				        break;
-				        
-				    case 5:
-				        // Display Top 3 Highest Rated Products (by average rating)
-				        System.out.println("\n*** TOP 3 HIGHEST RATED PRODUCTS ***");
-				        LinkedList<Product> topRatedProducts = amazon.getTop3Products();
+						Product newProduct = new Product(newProductId, productName, productPrice, initialStock);
+						amazon.addProduct(newProduct);
+						System.out.println(" Product added successfully!");
+						System.out.println(" Product ID is : " + newProduct.getProductId());
+						break;
 
-				        if (topRatedProducts.empty()) {
-				            System.out.println("No products available or no products with ratings.");
-				        } else {
-				            System.out.println(" TOP 3 HIGHEST RATED PRODUCTS (by average rating):");
-				            topRatedProducts.findFirst();
-				            int rank = 1;
+					case 2:
+						System.out.println("\n*** REMOVE PRODUCT ***");
+						System.out.print("Enter product ID to remove: ");
+						int removeProductId = scanner.nextInt();
+						scanner.nextLine();
 
-				            while (topRatedProducts.retrieve() != null) {
-				                Product product = topRatedProducts.retrieve();
-				                double avgRating = product.getAverageRating();
-				                int reviewCount = product.getReviews().size();
+						if (amazon.removeProduct(removeProductId)) {
+							System.out.println(" Product removed successfully!");
+						} else {
+							System.out.println(" Product not found with ID: " + removeProductId);
+						}
+						break;
 
-				                System.out.printf("%d. %s - Rating: %.2f/5.0", rank, product.getName(), avgRating);
+					case 3:
+						System.out.println("\n*** UPDATE PRODUCT STOCK ***");
+						System.out.print("Enter product ID: ");
+						int updateProductId = scanner.nextInt();
+						scanner.nextLine();
 
-				                if (reviewCount > 0) {
-				                    System.out.printf(" (Based on %d review%s)%n", reviewCount,
-				                            reviewCount == 1 ? "" : "s");
-				                } else {
-				                    System.out.println(" (No reviews yet)");
-				                }
+						Product productToUpdate = amazon.searchProductById(updateProductId);
+						if (productToUpdate != null) {
+							System.out.print("Enter new stock quantity: ");
+							int newStock = scanner.nextInt();
+							scanner.nextLine();
+							productToUpdate.setStock(newStock);
+							System.out.println(" Stock updated successfully!");
+						} else {
+							System.out.println(" Product not found!");
+						}
+						break;
 
-				                // Show product details
-				                System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n", product.getProductId(),
-				                        product.getPrice(), product.getStock());
+					case 4:
+						// Search Product by ID or Name
+						System.out.println("\n*** SEARCH PRODUCT ***");
+						System.out.println("1. Search by ID (Phase II: Logarithmic O(log n) Search)");
+						System.out.println("2. Search by Name");
+						System.out.print("Choose search method (1-2): ");
+						int searchMethod = scanner.nextInt();
+						scanner.nextLine();
 
-				                rank++;
-				                if (!topRatedProducts.last()) {
-				                    topRatedProducts.findNext();
-				                } else {
-				                    break;
-				                }
-				            }
-				        }
-				        break;
-				        
-				    case 6:
-				        // Display Top 3 Most Reviewed Products (by number of reviews)
-				        System.out.println("\n*** TOP 3 MOST REVIEWED PRODUCTS ***");
-				        LinkedList<Product> mostReviewedProducts = amazon.getTop3MostReviewedProducts();
+						if (searchMethod == 1) {
+							// Search by ID
+							System.out.print("Enter product ID: ");
 
-				        if (mostReviewedProducts.empty()) {
-				            System.out.println("No products available.");
-				        } else {
-				            System.out.println(" TOP 3 MOST REVIEWED PRODUCTS (by number of reviews):");
-				            mostReviewedProducts.findFirst();
-				            int rank = 1;
+							if (!scanner.hasNextInt()) {
+								System.out.println("Error: Please enter a valid numeric ID!");
+								scanner.nextLine();
+								break;
+							}
 
-				            while (mostReviewedProducts.retrieve() != null) {
-				                Product product = mostReviewedProducts.retrieve();
-				                int reviewCount = product.getReviews().size();
-				                double avgRating = product.getAverageRating();
+							int searchId = scanner.nextInt();
+							scanner.nextLine();
 
-				                System.out.printf("%d. %s - %d review%s", rank, product.getName(), reviewCount,
-				                        reviewCount == 1 ? "" : "s");
+							if (searchId <= 0) {
+								System.out.println("Error: Product ID must be a positive number!");
+								break;
+							}
 
-				                if (reviewCount > 0) {
-				                    System.out.printf(" (Average Rating: %.2f/5.0)%n", avgRating);
-				                } else {
-				                    System.out.println(" (No ratings yet)");
-				                }
+							Product foundProduct = amazon.searchProductById(searchId);
+							if (foundProduct != null) {
+								System.out.println("\nProduct Found:");
+								System.out.println("ID: " + foundProduct.getProductId());
+								System.out.println("Name: " + foundProduct.getName());
+								System.out.println("Price: $" + foundProduct.getPrice());
+								System.out.println("Stock: " + foundProduct.getStock());
 
-				                System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n", product.getProductId(),
-				                        product.getPrice(), product.getStock());
+								// Simple rating display
+								double avgRating = foundProduct.getAverageRating();
+								if (avgRating > 0) {
+									System.out.println("Rating: " + avgRating + "/5.0");
+								}
 
-				                rank++;
-				                if (!mostReviewedProducts.last()) {
-				                    mostReviewedProducts.findNext();
-				                } else {
-				                    break;
-				                }
-				            }
-				        }
-				        break;
-				        
-				    case 7:
-				        // Common Products Between 2 Customers
-				        System.out.println("\n*** COMMON HIGHLY RATED PRODUCTS ***");
-				        System.out.print("Enter first customer ID: ");
-				        int custId1 = scanner.nextInt();
-				        scanner.nextLine();
+								// Simple stock status
+								if (foundProduct.getStock() > 0) {
+									System.out.println("Status: In Stock");
+								} else {
+									System.out.println("Status: Out of Stock");
+								}
 
-				        System.out.print("Enter second customer ID: ");
-				        int custId2 = scanner.nextInt();
-				        scanner.nextLine();
+							} else {
+								System.out.println("Product not found with ID: " + searchId);
+							}
 
-				        // Input validation
-				        if (custId1 < 0 || custId2 < 0) {
-				            System.out.println("Error: Customer IDs cannot be negative.");
-				            break;
-				        }
+						} else if (searchMethod == 2) {
+							// Search by Name
+							System.out.print("Enter product name: ");
+							String searchName = scanner.nextLine().trim();
 
-				        // Call your method that returns LinkedList<Product>
-				        LinkedList<Product> commonProducts = amazon.getCommonHighlyRatedProducts(custId1, custId2);
+							if (searchName.isEmpty()) {
+								System.out.println("Error: Product name cannot be empty!");
+								break;
+							}
 
-				        if (commonProducts.empty()) {
-				            System.out.println("No common 5-star products found between these customers.");
-				        } else {
-				            System.out.println("\nCOMMON 5-STAR PRODUCTS:");
-				            commonProducts.findFirst();
-				            int count = 1;
+							Product p = amazon.searchProductByName(searchName);
+							if (p != null) {
+								System.out.println("\nProduct Found:");
+								System.out.println("ID: " + p.getProductId());
+								System.out.println("Name: " + p.getName());
+								System.out.println("Price: $" + p.getPrice());
+								System.out.println("Stock: " + p.getStock());
 
-				            // Safer loop condition
-				            while (true) {
-				                Product product = commonProducts.retrieve();
+								double avgRating = p.getAverageRating();
+								if (avgRating > 0) {
+									System.out.println("Rating: " + avgRating + "/5.0");
+								}
 
-				                System.out.printf("%d. %s%n", count, product.getName());
-				                System.out.println("   Both customers rated: 5.0/5.0");
-				                System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n", 
-				                        product.getProductId(), product.getPrice(), product.getStock());
-				                System.out.println();
+								if (p.getStock() > 0) {
+									System.out.println("Status: In Stock");
+								} else {
+									System.out.println("Status: Out of Stock");
+								}
 
-				                count++;
-				                
-				                // Break condition at the start of potential next iteration
-				                if (commonProducts.last()) break;
-				                commonProducts.findNext();
-				            }
+							} else {
+								System.out.println("Product not found with name: '" + searchName + "'");
+							}
 
-				            System.out.printf("Found %d common 5-star product%s%n", count - 1,
-				                    (count - 1) == 1 ? "" : "s");
-				        }
-				        break;
-				        
-				    case 8:
-				        // View Out of Stock Products
-				        System.out.println("\n*** OUT OF STOCK PRODUCTS ***");
-				        LinkedList<Product> outOfStockProducts = amazon.trackOutOfStockProducts();
-				        
-				        if (outOfStockProducts.empty()) {
-				            System.out.println("All products are in stock!");
-				        } else {
-				            System.out.println("Out of Stock Products:");
-				            outOfStockProducts.findFirst();
-				            int count = 1;
+						} else {
+							System.out.println("Invalid choice! Please enter 1 or 2.");
+						}
+						break;
+					// Show Top 3 Products Submenu
+					case 5:
 
-				            while (true) {
-				                Product product = outOfStockProducts.retrieve();
-				                System.out.printf("%d. %s (ID: %d) - Price: $%.2f%n",
-				                    count, product.getName(), product.getProductId(), product.getPrice());
-				                count++;
-				                
-				                if (outOfStockProducts.last()) break;
-				                outOfStockProducts.findNext();
-				            }
-				        }
-				        break;
-				        
-				    case 9:
-				        // Products in Price Range (Phase II)
-				        System.out.println("\n*** PRODUCTS IN PRICE RANGE (Phase II: AVL Range Query) ***");
-				        System.out.print("Enter minimum price: ");
-				        double minPrice = scanner.nextDouble();
-				        System.out.print("Enter maximum price: ");
-				        double maxPrice = scanner.nextDouble();
-				        scanner.nextLine();
+						int top3Choice;
+						do {
+							System.out.println("\n*** TOP 3 PRODUCTS SUBMENU ***");
+							System.out.println("1. Highest Rated Products (by average rating)");
+							System.out.println("2. Most Reviewed Products (by number of reviews)");
+							System.out.println("3. Back to Product Menu");
+							System.out.print("Choose option (1-3): ");
 
-				        // Input validation
-				        if (minPrice < 0 || maxPrice < 0) {
-				            System.out.println("Error: Prices cannot be negative.");
-				            break;
-				        }
-				        if (minPrice > maxPrice) {
-				            System.out.println("Error: Minimum price cannot be greater than maximum price.");
-				            break;
-				        }
+							top3Choice = scanner.nextInt();
+							scanner.nextLine();
 
-				        LinkedList<Product> productsInRange = amazon.getProductsInPriceRange(minPrice, maxPrice);
-				        if (productsInRange.empty()) {
-				            System.out.println("No products found in range $" + minPrice + " - $" + maxPrice);
-				        } else {
-				            System.out.println("\nProducts in price range $" + minPrice + " - $" + maxPrice + ":");
-				            productsInRange.findFirst();
-				            int count = 1;
+							switch (top3Choice) {
+							case 1:
+								System.out.println("\n*** TOP 3 HIGHEST RATED PRODUCTS ***");
+								LinkedList<Product> topRatedProducts = amazon.getTop3Products();
 
-				            while (true) {
-				                Product product = productsInRange.retrieve();
-				                System.out.printf("%d. %s - $%.2f (ID: %d, Stock: %d)%n",
-				                    count, product.getName(), product.getPrice(), product.getProductId(), product.getStock());
-				                count++;
-				                
-				                if (productsInRange.last()) break;
-				                productsInRange.findNext();
-				            }
-				            System.out.println("Total products found: " + (count - 1));
-				        }
-				        break;
-				        
-				    case 10:
-				        System.out.println("Returning to main menu...");
-				        break;
-				        
-				    default:
-				        System.out.println("Invalid choice!");
-				    }
+								if (topRatedProducts.empty()) {
+									System.out.println("No products available or no products with ratings.");
+								} else {
+									System.out.println(" TOP 3 HIGHEST RATED PRODUCTS (by average rating):");
+									topRatedProducts.findFirst();
+									int rank = 1;
 
-				} while (choice2 != 10);
+									while (topRatedProducts.retrieve() != null) {
+										Product product = topRatedProducts.retrieve();
+										double avgRating = product.getAverageRating();
+										int reviewCount = product.getReviews().size();
+
+										System.out.printf("%d. %s - Rating: %.2f/5.0", rank, product.getName(),
+												avgRating);
+
+										if (reviewCount > 0) {
+											System.out.printf(" (Based on %d review%s)%n", reviewCount,
+													reviewCount == 1 ? "" : "s");
+										} else {
+											System.out.println(" (No reviews yet)");
+										}
+
+										// Show product details
+										System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n",
+												product.getProductId(), product.getPrice(), product.getStock());
+										System.out.println(); // Add spacing between products
+
+										rank++;
+										if (!topRatedProducts.last()) {
+											topRatedProducts.findNext();
+										} else {
+											break;
+										}
+									}
+								}
+								break;
+
+							case 2:
+								// Display Top 3 Most Reviewed Products (by number of reviews)
+								System.out.println("\n*** TOP 3 MOST REVIEWED PRODUCTS ***");
+								LinkedList<Product> mostReviewedProducts = amazon.getTop3MostReviewedProducts();
+
+								if (mostReviewedProducts.empty()) {
+									System.out.println("No products available.");
+								} else {
+									System.out.println(" TOP 3 MOST REVIEWED PRODUCTS (by number of reviews):");
+									mostReviewedProducts.findFirst();
+									int rank = 1;
+
+									while (mostReviewedProducts.retrieve() != null) {
+										Product product = mostReviewedProducts.retrieve();
+										int reviewCount = product.getReviews().size();
+										double avgRating = product.getAverageRating();
+
+										System.out.printf("%d. %s - %d review%s", rank, product.getName(), reviewCount,
+												reviewCount == 1 ? "" : "s");
+
+										if (reviewCount > 0) {
+											System.out.printf(" (Average Rating: %.2f/5.0)%n", avgRating);
+										} else {
+											System.out.println(" (No ratings yet)");
+										}
+
+										System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n",
+												product.getProductId(), product.getPrice(), product.getStock());
+										System.out.println(); // Add spacing between products
+
+										rank++;
+										if (!mostReviewedProducts.last()) {
+											mostReviewedProducts.findNext();
+										} else {
+											break;
+										}
+									}
+								}
+								break;
+
+							case 3:
+								System.out.println("Returning to product menu...");
+								break;
+
+							default:
+								System.out.println("Invalid choice! Please enter 1, 2, or 3.");
+							}
+						} while (top3Choice != 3);
+						break;
+
+					case 6:
+						// Common Products Between 2 Customers
+						System.out.println("\n*** COMMON HIGHLY RATED PRODUCTS ***");
+						System.out.print("Enter first customer ID: ");
+						int custId1 = scanner.nextInt();
+						scanner.nextLine();
+
+						System.out.print("Enter second customer ID: ");
+						int custId2 = scanner.nextInt();
+						scanner.nextLine();
+
+						// Input validation
+						if (custId1 < 0 || custId2 < 0) {
+							System.out.println("Error: Customer IDs cannot be negative.");
+							break;
+						}
+
+						// Call your method that returns LinkedList<Product>
+						LinkedList<Product> commonProducts = amazon.getCommonHighlyRatedProducts(custId1, custId2);
+
+						if (commonProducts.empty()) {
+							System.out.println("No common 5-star products found between these customers.");
+						} else {
+							System.out.println("\nCOMMON 5-STAR PRODUCTS:");
+							commonProducts.findFirst();
+							int count = 1;
+
+							// Safer loop condition
+							while (true) {
+								Product product = commonProducts.retrieve();
+
+								System.out.printf("%d. %s%n", count, product.getName());
+								System.out.println("   Both customers rated: 5.0/5.0");
+								System.out.printf("   ID: %d | Price: $%.2f | Stock: %d%n", product.getProductId(),
+										product.getPrice(), product.getStock());
+								System.out.println();
+
+								count++;
+
+								// Break condition at the start of potential next iteration
+								if (commonProducts.last())
+									break;
+								commonProducts.findNext();
+							}
+
+							System.out.printf("Found %d common 5-star product%s%n", count - 1,
+									(count - 1) == 1 ? "" : "s");
+						}
+						break;
+
+					case 7:
+						// View Out of Stock Products
+						System.out.println("\n*** OUT OF STOCK PRODUCTS ***");
+						LinkedList<Product> outOfStockProducts = amazon.trackOutOfStockProducts();
+
+						if (outOfStockProducts.empty()) {
+							System.out.println("All products are in stock!");
+						} else {
+							System.out.println("Out of Stock Products:");
+							outOfStockProducts.findFirst();
+							int count = 1;
+
+							while (true) {
+								Product product = outOfStockProducts.retrieve();
+								System.out.printf("%d. %s (ID: %d) - Price: $%.2f%n", count, product.getName(),
+										product.getProductId(), product.getPrice());
+								count++;
+
+								if (outOfStockProducts.last())
+									break;
+								outOfStockProducts.findNext();
+							}
+						}
+						break;
+
+					case 8:
+						// Products in Price Range (Phase II)
+						System.out.println("\n*** PRODUCTS IN PRICE RANGE (Phase II: AVL Range Query) ***");
+						System.out.print("Enter minimum price: ");
+						double minPrice = scanner.nextDouble();
+						System.out.print("Enter maximum price: ");
+						double maxPrice = scanner.nextDouble();
+						scanner.nextLine();
+
+						// Input validation
+						if (minPrice < 0 || maxPrice < 0) {
+							System.out.println("Error: Prices cannot be negative.");
+							break;
+						}
+						if (minPrice > maxPrice) {
+							System.out.println("Error: Minimum price cannot be greater than maximum price.");
+							break;
+						}
+
+						LinkedList<Product> productsInRange = amazon.getProductsInPriceRange(minPrice, maxPrice);
+						if (productsInRange.empty()) {
+							System.out.println("No products found in range $" + minPrice + " - $" + maxPrice);
+						} else {
+							System.out.println("\nProducts in price range $" + minPrice + " - $" + maxPrice + ":");
+							productsInRange.findFirst();
+							int count = 1;
+
+							while (true) {
+								Product product = productsInRange.retrieve();
+								System.out.printf("%d. %s - $%.2f (ID: %d, Stock: %d)%n", count, product.getName(),
+										product.getPrice(), product.getProductId(), product.getStock());
+								count++;
+
+								if (productsInRange.last())
+									break;
+								productsInRange.findNext();
+							}
+							System.out.println("Total products found: " + (count - 1));
+						}
+						break;
+
+					case 9:
+						System.out.println("Returning to main menu...");
+						break;
+
+					default:
+						System.out.println("Invalid choice!");
+					}
+
+				} while (choice2 != 9);
 				break;
 			case 2:
 				int choice3;
@@ -421,24 +450,25 @@ public class Main {
 					case 1:
 						// Register Customer
 						System.out.println("\n*** REGISTER CUSTOMER ***");
-						
+
 						System.out.print("Enter customer name: ");
 						String customerName = scanner.nextLine();
 
 						System.out.print("Enter customer email: ");
 						String customerEmail = scanner.nextLine();
-						
+
 						// Generate new customer ID
 						LinkedList<Customer> allCustomers = amazon.getCustomers().getAllElementsInOrder();
 						int customerId;
 						if (allCustomers.empty()) {
-						    customerId = 1;
+							customerId = 1;
 						} else {
-						    allCustomers.findFirst();
-						    while (!allCustomers.last()) allCustomers.findNext();
-						    customerId = allCustomers.retrieve().getCustomerId() + 1;
+							allCustomers.findFirst();
+							while (!allCustomers.last())
+								allCustomers.findNext();
+							customerId = allCustomers.retrieve().getCustomerId() + 1;
 						}
-						
+
 						Customer newCustomer = new Customer(customerId, customerName, customerEmail);
 						amazon.registerCustomer(customerId, customerName, customerEmail);
 						System.out.println(" Your ID is: " + newCustomer.getCustomerId());
@@ -557,11 +587,12 @@ public class Main {
 						LinkedList<Review> allReviews = amazon.getReviews().getAllElementsInOrder();
 						int reviewId;
 						if (allReviews.empty()) {
-						    reviewId = 1;
+							reviewId = 1;
 						} else {
-						    allReviews.findFirst();
-						    while (!allReviews.last()) allReviews.findNext();
-						    reviewId = allReviews.retrieve().getReviewId() + 1;
+							allReviews.findFirst();
+							while (!allReviews.last())
+								allReviews.findNext();
+							reviewId = allReviews.retrieve().getReviewId() + 1;
 						}
 
 						amazon.addReview(reviewId, reviewProductId, reviewCustomerId, rating, comment);
@@ -633,11 +664,12 @@ public class Main {
 
 							while (true) {
 								Customer cust = sortedCustomers.retrieve();
-								System.out.printf("%d. %s (ID: %d, Email: %s)%n",
-									count, cust.getName(), cust.getCustomerId(), cust.getEmail());
+								System.out.printf("%d. %s (ID: %d, Email: %s)%n", count, cust.getName(),
+										cust.getCustomerId(), cust.getEmail());
 								count++;
-								
-								if (sortedCustomers.last()) break;
+
+								if (sortedCustomers.last())
+									break;
 								sortedCustomers.findNext();
 							}
 						}
@@ -656,18 +688,19 @@ public class Main {
 						} else {
 							Product product = amazon.searchProductById(productId);
 							String productName = (product != null) ? product.getName() : "Unknown Product";
-							
+
 							System.out.println("\nCUSTOMERS WHO REVIEWED: " + productName);
 							reviewers.findFirst();
 							int count = 1;
 
 							while (true) {
 								Customer cust = reviewers.retrieve();
-								System.out.printf("%d. %s (ID: %d, Email: %s)%n",
-									count, cust.getName(), cust.getCustomerId(), cust.getEmail());
+								System.out.printf("%d. %s (ID: %d, Email: %s)%n", count, cust.getName(),
+										cust.getCustomerId(), cust.getEmail());
 								count++;
-								
-								if (reviewers.last()) break;
+
+								if (reviewers.last())
+									break;
 								reviewers.findNext();
 							}
 						}
@@ -726,22 +759,23 @@ public class Main {
 
 						System.out.print("Enter Order Date (yyyy-MM-dd): ");
 						String orderDate = scanner.next();
-						
+
 						// Generate new order ID
 						LinkedList<Order> allOrders = amazon.getOrders().getAllElementsInOrder();
 						int orderId;
 						if (allOrders.empty()) {
-						    orderId = 1;
+							orderId = 1;
 						} else {
-						    allOrders.findFirst();
-						    while (!allOrders.last()) allOrders.findNext();
-						    orderId = allOrders.retrieve().getOrderId() + 1;
+							allOrders.findFirst();
+							while (!allOrders.last())
+								allOrders.findNext();
+							orderId = allOrders.retrieve().getOrderId() + 1;
 						}
-						
+
 						Order newOrder = amazon.createOrder(orderId, customerId, selectedProducts, orderDate);
 						if (newOrder != null) {
 							System.out.println(" Order placed successfully!");
-						
+
 							System.out.println("Order Summary:");
 							System.out.println("Order ID: " + newOrder.getOrderId());
 							System.out.println("Customer: " + newOrder.getCustomer().getName());
@@ -844,10 +878,10 @@ public class Main {
 
 				} while (choice4 != 6);
 				break;
-			
+
 			case 4:
-				 System.out.println("Saving data before exit...");
-				    amazon.saveAllData();
+				System.out.println("Saving data before exit...");
+				amazon.saveAllData();
 				System.out.println("Goodbye!");
 				break;
 			default:
