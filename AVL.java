@@ -148,7 +148,10 @@ public class AVL<T> {
     public T retrieve() {
         // Note: This method is problematic without context
         // Consider using get() method instead in your EcommerceSystem
-        return null;
+       return root != null ? root.data : null;
+}
+
+        
     }
 
     // Remove method
@@ -351,4 +354,5 @@ public class AVL<T> {
     }
     
     
+
 }
