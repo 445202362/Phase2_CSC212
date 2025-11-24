@@ -716,7 +716,7 @@ public class EcommerceSystem {
 	}
 
 	private void loadProducts() {
-		try (BufferedReader br = new BufferedReader(new FileReader("prodcuts.csv"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("products.csv"))) {
 			String line = br.readLine(); // Skip header
 			int count = 0;
 
@@ -846,7 +846,7 @@ public class EcommerceSystem {
 	}
 
 	private void saveProducts() {
-		try (PrintWriter pw = new PrintWriter(new FileWriter("prodcuts.csv"))) {
+		try (PrintWriter pw = new PrintWriter(new FileWriter("products.csv"))) {
 			pw.println("productId,name,price,stock");
 
 			LinkedList<Product> allProducts = new LinkedList<>();
@@ -942,3 +942,4 @@ public class EcommerceSystem {
 		inOrderTraversal(node.right, result);
 	}
 }
+
