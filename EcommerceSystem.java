@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class EcommerceSystem {
-	// Phase II: AVL Trees as REQUIRED by PDF
+	// Phase II: AVL Trees
 	private AVL<Product> products;
 	private AVL<Product> productsByPrice;
 	private AVL<Customer> customers;
@@ -119,12 +119,12 @@ public class EcommerceSystem {
 
 	// == CUSTOMER OPERATIONS ==
 
-	// Search a customer id - O(log n) as REQUIRED
+	// Search a customer id 
 	public Customer searchCustomerById(int customerId) {
 		return customers.get(customerId);
 	}
 
-	// Register customer - O(log n) as REQUIRED
+	// Register customer 
 	public Customer registerCustomer(int customerId, String name, String email) {
 		if (customers.get(customerId) != null) {
 			System.out.println("Customer with ID " + customerId + " already exists!");
@@ -219,7 +219,7 @@ public class EcommerceSystem {
 		if (allProducts.empty())
 			return new LinkedList<>();
 
-		// First, collect all products with their 5-star counts in a simple array
+		//collect all products with their 5-star counts in a simple array
 		int productCount = allProducts.size();
 		Product[] productArray = new Product[productCount];
 		int[] fiveStarCounts = new int[productCount];
@@ -315,7 +315,7 @@ public class EcommerceSystem {
 		return outOfStock;
 	}
 
-	// Add product - O(log n) as REQUIRED
+	// Add product 
 	public void addProduct(Product product) {
 		products.insert(product.getProductId(), product);
 		productsByPrice.insert((int) (product.getPrice() * 100), product);
@@ -333,7 +333,7 @@ public class EcommerceSystem {
 		return false;
 	}
 
-	// Update a product - O(log n) as REQUIRED
+	// Update a product
 	public void updateProduct(int productId, String name, double price, int stock) {
 		Product product = products.get(productId);
 		if (product != null) {
@@ -350,7 +350,7 @@ public class EcommerceSystem {
 		}
 	}
 
-	// Search a product id - O(log n) as REQUIRED
+	// Search a product id 
 	public Product searchProductById(int productId) {
 		return products.get(productId);
 	}
@@ -472,7 +472,7 @@ public class EcommerceSystem {
 		}
 	}
 
-	// Search an order id - O(log n) as REQUIRED
+	// Search an order id 
 	public Order searchOrderById(int orderId) {
 		return orders.get(orderId);
 	}
@@ -499,9 +499,9 @@ public class EcommerceSystem {
 		return ordersInRange;
 	}
 
-	// == PHASE II ADVANCED QUERIES USING BST/AVL TRAVERSAL ==
+	// PHASE II ADVANCED QUERIES USING BST/AVL TRAVERSAL ==
 
-	// 1. Find All Orders Between Two Dates (use in-order traversal) - AS REQUIRED
+	// 1. Find All Orders Between Two Dates (use in-order traversal) 
 	public LinkedList<Order> getOrdersBetweenDates(String startDate, String endDate) {
 		LinkedList<Order> result = new LinkedList<>();
 		inOrderDateRange(orders.getRoot(), startDate, endDate, result);
@@ -512,7 +512,7 @@ public class EcommerceSystem {
 		if (node == null)
 			return;
 
-		// In-order traversal as REQUIRED by PDF
+		// In-order traversal 
 		inOrderDateRange(node.left, startDate, endDate, result);
 
 		String orderDate = node.data.getOrderDate();
@@ -525,7 +525,7 @@ public class EcommerceSystem {
 
 	public LinkedList<Product> getProductsInPriceRange(double minPrice, double maxPrice) {
 		LinkedList<Product> result = new LinkedList<>();
-		rangeQueryByPrice(productsByPrice.getRoot(), minPrice, maxPrice, result); // CHANGED: uses productsByPrice
+		rangeQueryByPrice(productsByPrice.getRoot(), minPrice, maxPrice, result); // CHANGED uses productsByPrice
 		return result;
 	}
 
@@ -601,7 +601,7 @@ public class EcommerceSystem {
 		return topProducts;
 	}
 
-	// 4. List All Customers Sorted Alphabetically - AS REQUIRED
+	// 4. List All Customers Sorted Alphabetically
 	public LinkedList<Customer> getCustomersSortedAlphabetically() {
 		LinkedList<Customer> allCustomers = new LinkedList<>();
 		inOrderTraversal(customers.getRoot(), allCustomers);
@@ -623,7 +623,7 @@ public class EcommerceSystem {
 				customersList.findNext();
 		}
 
-		// Bubble sort by name (since we already used in-order traversal as required)
+		// Bubble sort by name (since we already used in-order traversal)
 		for (int i = 0; i < customerArray.length - 1; i++) {
 			for (int j = 0; j < customerArray.length - i - 1; j++) {
 				if (customerArray[j].getName().compareToIgnoreCase(customerArray[j + 1].getName()) > 0) {
@@ -942,4 +942,5 @@ public class EcommerceSystem {
 		inOrderTraversal(node.right, result);
 	}
 }
+
 
