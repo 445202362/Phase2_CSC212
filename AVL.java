@@ -124,7 +124,7 @@ public class AVL<T> {
         }
     }
 
-    // Get element by key (improved version)
+    // Get element by key 
     public T get(int key) {
         AVLNode<T> node = getRec(root, key);
         return node != null ? node.data : null;
@@ -144,10 +144,7 @@ public class AVL<T> {
         }
     }
 
-    // For backward compatibility with your existing code
     public T retrieve() {
-        // Note: This method is problematic without context
-        // Consider using get() method instead in your EcommerceSystem
        return root != null ? root.data : null;
 }
 
@@ -291,7 +288,7 @@ public class AVL<T> {
         }
     }
 
-    // 3. Get all keys in sorted order (for debugging)
+    // 3. Get all keys in sorted order 
     public LinkedList<Integer> getAllKeysInOrder() {
         LinkedList<Integer> result = new LinkedList<>();
         getKeysInOrder(root, result);
@@ -327,12 +324,12 @@ public class AVL<T> {
 
     // === BACKWARD COMPATIBILITY METHODS ===
     
-    // For backward compatibility with your existing code
+    // For backward compatibility 
     public LinkedList<T> getAllElements() {
         return getAllElementsInOrder();
     }
 
-    // Display tree structure (for debugging)
+    // Display tree structure 
     public void display() {
         displayRec(root, 0);
     }
@@ -356,3 +353,4 @@ public class AVL<T> {
     
 
 }
+
