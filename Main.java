@@ -583,16 +583,24 @@ public class Main {
 							break;
 						}
 
-						// Generate new review ID
-						LinkedList<Review> allReviews = amazon.getReviews().getAllElementsInOrder();
+						// Generate new review ID - FIXED: Use manual iteration for LinkedList
 						int reviewId;
-						if (allReviews.empty()) {
+						LinkedList<Review> allReviewsList = amazon.getReviews();
+						if (allReviewsList.empty()) {
 							reviewId = 1;
 						} else {
-							allReviews.findFirst();
-							while (!allReviews.last())
-								allReviews.findNext();
-							reviewId = allReviews.retrieve().getReviewId() + 1;
+							allReviewsList.findFirst();
+							int maxId = 0;
+							do {
+								Review r = allReviewsList.retrieve();
+								if (r.getReviewId() > maxId) {
+									maxId = r.getReviewId();
+								}
+								if (allReviewsList.last())
+									break;
+								allReviewsList.findNext();
+							} while (true);
+							reviewId = maxId + 1;
 						}
 
 						amazon.addReview(reviewId, reviewProductId, reviewCustomerId, rating, comment);
@@ -725,9 +733,10 @@ public class Main {
 					System.out.println("3. Update Order Status");
 					System.out.println("4. Search Order by ID");
 					System.out.println("5. Display All Orders between two dates (Phase II: In-order Traversal)");
-					System.out.println("6. Back to main menu");
+					System.out.println("6. All orders for a customer (Phase II)");
+					System.out.println("7. Back to main menu");
 
-					System.out.print("Enter choice (1-6): ");
+					System.out.print("Enter choice (1-7): ");
 
 					choice4 = scanner.nextInt();
 
@@ -868,15 +877,65 @@ public class Main {
 							System.out.println("No orders found in this range.");
 						}
 						break;
+					case 6: // Get All Orders for a Customer
+						System.out.print("Enter Customer ID: ");
+						int customerIdForOrders = scanner.nextInt();
+						scanner.nextLine();
 
-					case 6:
+						Customer customer = amazon.searchCustomerById(customerIdForOrders);
+						if (customer == null) {
+							System.out.println("Customer not found with ID: " + customerIdForOrders);
+							break;
+						}
+
+						LinkedList<Order> customerOrders = amazon.getOrdersForCustomer(customerIdForOrders);
+						if (customerOrders.empty()) {
+							System.out.println("No orders found for customer: " + customer.getName());
+						} else {
+							System.out.println("\nORDERS FOR CUSTOMER: " + customer.getName() + " (ID: "
+									+ customerIdForOrders + ")");
+							System.out.println("=".repeat(60));
+							customerOrders.findFirst();
+							int orderCount = 1;
+
+							while (true) {
+								Order order = customerOrders.retrieve();
+								System.out.printf("%d. Order ID: %d | Date: %s | Status: %s | Total: $%.2f%n",
+										orderCount, order.getOrderId(), order.getOrderDate(), order.getStatus(),
+										order.getTotalPrice());
+
+								// Display products in this order
+								System.out.println("   Products:");
+								LinkedList<Product> orderProducts = order.getProducts();
+								if (!orderProducts.empty()) {
+									orderProducts.findFirst();
+									while (true) {
+										Product product = orderProducts.retrieve();
+										System.out.printf("   - %s ($%.2f)%n", product.getName(), product.getPrice());
+										if (orderProducts.last())
+											break;
+										orderProducts.findNext();
+									}
+								}
+								System.out.println(); // Add spacing between orders
+
+								orderCount++;
+								if (customerOrders.last())
+									break;
+								customerOrders.findNext();
+							}
+							System.out.println("Total orders: " + (orderCount - 1));
+						}
+						break;
+
+					case 7:
 						System.out.println("Returning to main menu...");
 						break;
 					default:
 						System.out.println("Invalid choice!");
 					}
 
-				} while (choice4 != 6);
+				} while (choice4 != 7);
 				break;
 
 			case 4:
