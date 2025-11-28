@@ -320,7 +320,7 @@ public class Main {
 							break;
 						}
 
-						// Call your method that returns LinkedList<Product>
+						
 						LinkedList<Product> commonProducts = amazon.getCommonHighlyRatedProducts(custId1, custId2);
 
 						if (commonProducts.empty()) {
@@ -330,7 +330,7 @@ public class Main {
 							commonProducts.findFirst();
 							int count = 1;
 
-							// Safer loop condition
+							
 							while (true) {
 								Product product = commonProducts.retrieve();
 
@@ -583,7 +583,7 @@ public class Main {
 							break;
 						}
 
-						// Generate new review ID - FIXED: Use manual iteration for LinkedList
+						// Generate new review ID 
 						int reviewId;
 						LinkedList<Review> allReviewsList = amazon.getReviews();
 						if (allReviewsList.empty()) {
@@ -951,3 +951,4 @@ public class Main {
 
 	}
 }
+
