@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class EcommerceSystem {
-    // Phase II: AVL Trees as REQUIRED by PDF
+    // Phase II: AVL Trees 
     private AVL<Product> products;
     private AVL<Customer> customers;
     private AVL<Order> orders;
@@ -132,12 +132,12 @@ public class EcommerceSystem {
 
     // == CUSTOMER OPERATIONS ==
 
-    // Search a customer id - O(log n) as REQUIRED
+    // Search a customer id 
     public Customer searchCustomerById(int customerId) {
         return customers.get(customerId);
     }
 
-    // Register customer - O(log n) as REQUIRED
+    // Register customer 
     public Customer registerCustomer(int customerId, String name, String email) {
         if (customers.get(customerId) != null) {
             System.out.println("Customer with ID " + customerId + " already exists!");
@@ -277,7 +277,7 @@ public class EcommerceSystem {
         return outOfStock;
     }
 
-    // Add product - O(log n) as REQUIRED
+    // Add product 
     public void addProduct(Product product) {
         products.insert(product.getProductId(), product);
     }
@@ -292,7 +292,7 @@ public class EcommerceSystem {
         return false;
     }
 
-    // Update a product - O(log n) as REQUIRED
+    // Update a product 
     public void updateProduct(int productId, String name, double price, int stock) {
         Product product = products.get(productId);
         if (product != null) {
@@ -302,7 +302,7 @@ public class EcommerceSystem {
         }
     }
 
-    // Search a product id - O(log n) as REQUIRED
+    // Search a product id 
     public Product searchProductById(int productId) {
         return products.get(productId);
     }
@@ -422,7 +422,7 @@ public class EcommerceSystem {
         }
     }
 
-    // Search an order id - O(log n) as REQUIRED
+    // Search an order id 
     public Order searchOrderById(int orderId) {
         return orders.get(orderId);
     }
@@ -450,7 +450,7 @@ public class EcommerceSystem {
 
     // == PHASE II ADVANCED QUERIES USING BST/AVL TRAVERSAL ==
 
-    // 1. Find All Orders Between Two Dates (use in-order traversal) - AS REQUIRED
+    // 1. Find All Orders Between Two Dates (use in-order traversal)
     public LinkedList<Order> getOrdersBetweenDates(String startDate, String endDate) {
         LinkedList<Order> result = new LinkedList<>();
         inOrderDateRange(orders.getRoot(), startDate, endDate, result);
@@ -470,7 +470,7 @@ public class EcommerceSystem {
         inOrderDateRange(node.right, startDate, endDate, result);
     }
 
-    // 2. Find products in a price range - UPDATED VERSION
+    // 2. Find products in a price range 
     public LinkedList<Product> getProductsInPriceRange(double minPrice, double maxPrice) {
         LinkedList<Product> result = new LinkedList<>();
         rangeQueryByPriceFromIdTree(products.getRoot(), minPrice, maxPrice, result);
@@ -536,7 +536,7 @@ public class EcommerceSystem {
         return topProducts;
     }
 
-    // 4. List All Customers Sorted Alphabetically - AS REQUIRED
+    // 4. List All Customers Sorted Alphabetically 
     public LinkedList<Customer> getCustomersSortedAlphabetically() {
         LinkedList<Customer> allCustomers = new LinkedList<>();
         inOrderTraversal(customers.getRoot(), allCustomers);
@@ -883,3 +883,4 @@ public class EcommerceSystem {
         inOrderTraversal(node.right, result);
     }
 }
+
